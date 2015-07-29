@@ -1,0 +1,22 @@
+{
+    "name": "varsitynewsnetwork/php-google-places-api",
+    "description": "A mini library to fetch place information out of Google Places API via a text search",
+    "require-dev": {
+        "peridot-php/peridot": "^1.15"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Mark Boudreau",
+            "email": "mark@varsitynewsnetwork.com"
+        }
+    ],
+    "require": {
+        "guzzlehttp/guzzle": "~6.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Vnn\\Services\\Location\\": ["src"]
+        }
+    }
+}
