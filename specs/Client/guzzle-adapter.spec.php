@@ -17,7 +17,7 @@ describe('Vnn\Places\Client\GuzzleAdapter', function () {
             $this->guzzle->get('/foo')->willReturn(new Response(200, [], '{"status": "OK", "results": []}'));
             $result = $this->adapter->fetch('/foo');
 
-            expect($result)->to->equal([]);
+            expect($result)->to->equal(['status' => 'OK', 'results' => []]);
 
             $this->prophet->checkPredictions();
         });
@@ -28,7 +28,7 @@ describe('Vnn\Places\Client\GuzzleAdapter', function () {
             );
             $result = $this->adapter->fetch('/foo');
 
-            expect($result)->to->equal([1, 2, 3]);
+            expect($result['results'])->to->equal([1, 2, 3]);
         });
 
         it('should throw an exception of the result is empty or not valid JSON', function () {
