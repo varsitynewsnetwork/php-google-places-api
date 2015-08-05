@@ -14,7 +14,7 @@ describe('Vnn\Places\PlaceService', function () {
     describe('search()', function () {
         it('should query Google for the requested place', function () {
             $this->client->fetch('https://maps.googleapis.com/maps/api/place/textsearch/json?query=foo&key=master')
-                ->willReturn(9);
+                ->willReturn(['results' => 9]);
             $result = $this->service->search('foo');
 
             expect($result)->to->equal(9);
@@ -23,7 +23,7 @@ describe('Vnn\Places\PlaceService', function () {
 
         it('should encode the query param', function () {
             $this->client->fetch('https://maps.googleapis.com/maps/api/place/textsearch/json?query=foo+bar+city&key=master')
-                ->willReturn(9);
+                ->willReturn(['results' => 9]);
             $this->service->search('foo bar city');
 
             $this->prophet->checkPredictions();
@@ -31,7 +31,7 @@ describe('Vnn\Places\PlaceService', function () {
 
         it('should run the result through the passed formatter', function () {
             $this->client->fetch('https://maps.googleapis.com/maps/api/place/textsearch/json?query=&key=master')
-                ->willReturn(9);
+                ->willReturn(['results' => 9]);
             $result = $this->service->search('', function ($result) {
                 return $result * 2;
             });
@@ -44,7 +44,7 @@ describe('Vnn\Places\PlaceService', function () {
     describe('detail()', function () {
         it('should query Google for the requested place', function () {
             $this->client->fetch('https://maps.googleapis.com/maps/api/place/details/json?placeid=foo&key=master')
-                ->willReturn(9);
+                ->willReturn(['result' => 9]);
             $result = $this->service->detail('foo');
 
             expect($result)->to->equal(9);
@@ -53,7 +53,7 @@ describe('Vnn\Places\PlaceService', function () {
 
         it('should run the result through the passed formatter', function () {
             $this->client->fetch('https://maps.googleapis.com/maps/api/place/details/json?placeid=&key=master')
-                ->willReturn(9);
+                ->willReturn(['result' => 9]);
             $result = $this->service->detail('', function ($result) {
                 return $result * 2;
             });

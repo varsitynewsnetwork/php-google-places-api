@@ -42,11 +42,7 @@ class GuzzleAdapter implements ClientInterface
                 throw new \RuntimeException($data['error_message']);
             }
 
-            if (!$data || !isset($data['results'])) {
-                return [];
-            }
-
-            return $data['results'];
+            return $data;
         } catch (\Exception $e) {
             throw new \RuntimeException($e->getMessage(), 0, $e);
         }

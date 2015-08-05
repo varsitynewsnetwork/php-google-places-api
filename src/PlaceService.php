@@ -78,6 +78,12 @@ class PlaceService
 
         $data = $this->client->fetch($googleUrl);
 
+        if (!isset($data['results'])) {
+            return [];
+        }
+
+        $data = $data['results'];
+
         if (isset($resultFormatter)) {
             $data = $resultFormatter($data);
         }
@@ -100,6 +106,12 @@ class PlaceService
             '&key=' . urlencode($this->apiKey);
 
         $data = $this->client->fetch($googleUrl);
+
+        if (!isset($data['result'])) {
+            return [];
+        }
+
+        $data = $data['result'];
 
         if (isset($resultFormatter)) {
             $data = $resultFormatter($data);
