@@ -44,10 +44,6 @@ class GuzzleAdapter implements ClientInterface
                 throw new \RuntimeException($data['error_message']);
             }
 
-            if (!isset($data['results'])) {
-                throw new \RuntimeException('The response does not contain a results key.');
-            }
-
             return $data;
         } catch (\Exception $e) {
             throw new \RuntimeException($e->getMessage(), 0, $e);
