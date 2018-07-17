@@ -38,7 +38,9 @@ class GuzzleAdapter implements ClientInterface
                 throw new \RuntimeException('Failed to parse response');
             }
 
-            if ($data['status'] !== 'OK') {
+            if ($data['status'] !== 'OK'
+                && isset($data['error_message'])
+            ) {
                 throw new \RuntimeException($data['error_message']);
             }
 
