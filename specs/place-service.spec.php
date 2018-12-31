@@ -1,38 +1,64 @@
 <?php
 
-describe('Vnn\Services\Location\Google\PlacesService', function () {
+use Prophecy\Prophet;
+use Vnn\Places\Client\ClientInterface;
+use Vnn\Places\PlaceService;
 
+describe('Vnn\Places\PlaceService', function () {
     beforeEach(function () {
-        $this->places_api_key = "ENTER GOOGLE PLACES API KEY HERE";
+        $this->prophet = new Prophet();
+        $this->client = $this->prophet->prophesize(ClientInterface::class);
+        $this->service = new PlaceService($this->client->reveal(), ['key' => 'master']);
     });
 
-    describe('->getGooglePlaceAPIUrl()', function () {
+    describe('search()', function () {
+        it('should query Google for the requested place', function () {
+            $this->client->fetch('https://maps.googleapis.com/maps/api/place/textsearch/json?query=foo&key=master')
+                ->willReturn(['results' => 9]);
+            $result = $this->service->search('foo');
 
-        it('should return a properly encoded URL', function () {
-            $service = new Vnn\Services\Location\Google\PlacesService();
-            $url = $service->getGooglePlaceAPIUrl("foo bar");
-            assert($url == "https://maps.googleapis.com/maps/api/place/textsearch/json?query=foo+bar&key=");
+            expect($result)->to->equal(9);
+            $this->prophet->checkPredictions();
+        });
 
-            $url = $service->getGooglePlaceAPIUrl("http://example.com?arg=value&arg2=value2");
-            assert($url == "https://maps.googleapis.com/maps/api/place/textsearch/json?query=http%3A%2F%2Fexample.com%3Farg%3Dvalue%26arg2%3Dvalue2&key=");
+        it('should encode the query param', function () {
+            $this->client->fetch('https://maps.googleapis.com/maps/api/place/textsearch/json?query=foo+bar+city&key=master')
+                ->willReturn(['results' => 9]);
+            $this->service->search('foo bar city');
+
+            $this->prophet->checkPredictions();
+        });
+
+        it('should run the result through the passed formatter', function () {
+            $this->client->fetch('https://maps.googleapis.com/maps/api/place/textsearch/json?query=&key=master')
+                ->willReturn(['results' => 9]);
+            $result = $this->service->search('', function ($result) {
+                return $result * 2;
+            });
+
+            expect($result)->to->equal(18);
         });
     });
 
-    // skip the test for actually looking up information
-    xdescribe('->lookupLocation()', function () {
-        it('should return a valid address, lat, and long', function () {
-            $service = new Vnn\Services\Location\Google\PlacesService($this->places_api_key);
-            $testAddress = "12002 Jones Maltsberger Rd 78216 TX";
 
-            $retVal = $service->lookupLocation($testAddress);
+    describe('detail()', function () {
+        it('should query Google for the requested place', function () {
+            $this->client->fetch('https://maps.googleapis.com/maps/api/place/details/json?placeid=foo&key=master')
+                ->willReturn(['result' => 9]);
+            $result = $this->service->detail('foo');
 
-            assert($retVal['address'] == "12002 Jones Maltsberger Rd, San Antonio, TX 78216");
-            assert($retVal['lat'] == "29.5499212");
-            assert($retVal['lng'] == "-98.4652126");
+            expect($result)->to->equal(9);
+            $this->prophet->checkPredictions();
+        });
 
-            $retVal = $service->lookupLocation($testAddress, true);
-            assert($retVal['address'] == "12002 Jones Maltsberger Rd, San Antonio, TX 78216, USA");
+        it('should run the result through the passed formatter', function () {
+            $this->client->fetch('https://maps.googleapis.com/maps/api/place/details/json?placeid=&key=master')
+                ->willReturn(['result' => 9]);
+            $result = $this->service->detail('', function ($result) {
+                return $result * 2;
+            });
+
+            expect($result)->to->equal(18);
         });
     });
-
 });
