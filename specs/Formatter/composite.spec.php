@@ -8,9 +8,9 @@ describe('Vnn\Places\Formatter\CompositeFormatter', function () {
             $results = [];
             $expected = [3, 6, 9];
             $callback = function ($data) use (&$results) {
-                $data = $data + 3;
+                $data = $data[0] + 3;
                 array_push($results, $data);
-                return $data;
+                return [$data];
             };
             $formatter = new CompositeFormatter([
                 $callback,
@@ -18,9 +18,9 @@ describe('Vnn\Places\Formatter\CompositeFormatter', function () {
                 $callback
             ]);
 
-            $final = $formatter(0);
+            $final = $formatter([0]);
 
-            expect($final)->to->equal(9);
+            expect($final[0])->to->equal(9);
             expect($results)->to->equal($expected);
         });
     });

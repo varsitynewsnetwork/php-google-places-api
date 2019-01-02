@@ -1,6 +1,6 @@
 # google-places-api
 
-A mini library to fetch place information out of Google Places API via a text search
+A mini library to fetch place information out of Google Places API via a text search or a find place request
 
 
 ## Usage
@@ -9,14 +9,14 @@ A mini library to fetch place information out of Google Places API via a text se
 $service = new PlaceService(new GuzzleAdapter());
 $service->setApiKey('YOUR_KEY_HERE');
 
-$results = $service->search('Van Andel Arena');
+$results = $service->textSearch('Van Andel Arena');
 ```
 
 ### Formatters
 
 The concept of formatters are baked in to allow you to easily manipulate
 the data returned by Google. Simply pass a callable as the second argument
-to `search()`.
+to `textSearch()` or `findPlace()`.
 
 For instance, if you only wanted the address of the first result:
 
@@ -24,7 +24,7 @@ For instance, if you only wanted the address of the first result:
 $service = new PlaceService(new GuzzleAdapter());
 $service->setApiKey('YOUR_KEY_HERE');
 
-$results = $service->search('Van Andel Arena', function (results) {
+$results = $service->textSearch('Van Andel Arena', function (results) {
     if (count($results)) {
         return $results[0]['formatted_address'];
     }
@@ -46,7 +46,7 @@ Example:
 $service = new PlaceService(new GuzzleAdapter());
 $service->setApiKey('YOUR_KEY_HERE');
 
-$result = $service->search('Van Andel Arena', new CompositeFormatter([
+$result = $service->textSearch('Van Andel Arena', new CompositeFormatter([
     new SingleResultFormatter(),
     new CountryStripperFormatter(true),
     new LatLngFormatter(true)
