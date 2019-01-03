@@ -78,7 +78,8 @@ class PlaceService
      */
     public function textSearch($place, callable $resultFormatter = null, array $optionalParams = [])
     {
-        $queryString = http_build_query([
+        $queryString = http_build_query(
+            [
                 'query' => $place,
                 'key' => $this->apiKey
             ] + $optionalParams
@@ -114,7 +115,8 @@ class PlaceService
      */
     public function findPlace($place, callable $resultFormatter = null, $fields = null, array $optionalParams = [])
     {
-        $queryString = http_build_query([
+        $queryString = http_build_query(
+            [
                 'key' => $this->apiKey,
                 'input' => $place,
                 'inputtype' => 'textquery'
@@ -124,7 +126,7 @@ class PlaceService
         $googleUrl = $this->findPlaceEndpoint . '?' . $queryString;
 
         if ($fields !== null) {
-            $googleUrl .= '&fields=' . array_reduce($fields, function($carry, $item) {
+            $googleUrl .= '&fields=' . array_reduce($fields, function ($carry, $item) {
                 if (!$carry) {
                     return $item;
                 } else {
@@ -158,7 +160,8 @@ class PlaceService
      */
     public function detail($placeId, callable $resultFormatter = null, $fields = null, array $optionalParams = [])
     {
-        $queryString = http_build_query([
+        $queryString = http_build_query(
+            [
                 'placeid' => $placeId,
                 'key' => $this->apiKey
             ] + $optionalParams
@@ -167,7 +170,7 @@ class PlaceService
         $googleUrl = $this->detailEndpoint . '?' . $queryString;
 
         if ($fields !== null) {
-            $googleUrl .= '&fields=' . array_reduce($fields, function($carry, $item) {
+            $googleUrl .= '&fields=' . array_reduce($fields, function ($carry, $item) {
                 if (!$carry) {
                     return $item;
                 } else {
