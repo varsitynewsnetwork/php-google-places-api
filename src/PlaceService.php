@@ -72,14 +72,18 @@ class PlaceService
      *
      * @param string $place The string to look up as a Google Places location
      * @param callable $resultFormatter Called on the results to format them
+     * @param array $optionalParams An associative array of optional parameters to text search
      * @return array
      * @throws \RuntimeException
      */
-    public function textSearch($place, callable $resultFormatter = null)
+    public function textSearch($place, callable $resultFormatter = null, array $optionalParams = [])
     {
-        $googleUrl = $this->textSearchEndpoint .
-            '?query=' . urlencode($place) .
-            '&key=' . urlencode($this->apiKey);
+        $queryString = http_build_query([
+                'query' => $place,
+                'key' => $this->apiKey
+            ] + $optionalParams
+        );
+        $googleUrl = $this->textSearchEndpoint . '?' . $queryString;
 
         $data = $this->client->fetch($googleUrl);
 
@@ -104,15 +108,20 @@ class PlaceService
      * @param string $place The string to look up as a Google Places location
      * @param callable $resultFormatter Called on the results to format them
      * @param array $fields The output fields you wish to retrieve from the Places API
+     * @param array $optionalParams An associative array of optional parameters.
      * @return array
      * @throws \RuntimeException
      */
-    public function findPlace($place, callable $resultFormatter = null, $fields = null)
+    public function findPlace($place, callable $resultFormatter = null, $fields = null, array $optionalParams = [])
     {
-        $googleUrl = $this->findPlaceEndpoint .
-        '?key=' . urlencode($this->apiKey) .
-        '&input=' . urlencode($place) .
-        '&inputtype=textquery';
+        $queryString = http_build_query([
+                'key' => $this->apiKey,
+                'input' => $place,
+                'inputtype' => 'textquery'
+            ] + $optionalParams
+        );
+
+        $googleUrl = $this->findPlaceEndpoint . '?' . $queryString;
 
         if ($fields !== null) {
             $googleUrl .= '&fields=' . array_reduce($fields, function($carry, $item) {
@@ -147,11 +156,25 @@ class PlaceService
      * @param callable|null $resultFormatter
      * @return array
      */
-    public function detail($placeId, callable $resultFormatter = null)
+    public function detail($placeId, callable $resultFormatter = null, $fields = null, array $optionalParams = [])
     {
-        $googleUrl = $this->detailEndpint .
-            '?placeid=' . urlencode($placeId) .
-            '&key=' . urlencode($this->apiKey);
+        $queryString = http_build_query([
+                'placeid' => $placeId,
+                'key' => $this->apiKey
+            ] + $optionalParams
+        );
+
+        $googleUrl = $this->detailEndpint . '?' . $queryString;
+
+        if ($fields !== null) {
+            $googleUrl .= '&fields=' . array_reduce($fields, function($carry, $item) {
+                if (!$carry) {
+                    return $item;
+                } else {
+                    return $carry . ',' . $item;
+                }
+            });
+        }
 
         $data = $this->client->fetch($googleUrl);
 
