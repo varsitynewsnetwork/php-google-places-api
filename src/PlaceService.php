@@ -23,7 +23,7 @@ class PlaceService
     /**
      * @var string
      */
-    protected $detailEndpint = 'https://maps.googleapis.com/maps/api/place/details/json';
+    protected $detailEndpoint = 'https://maps.googleapis.com/maps/api/place/details/json';
 
     /**
      * @var ClientInterface
@@ -164,7 +164,7 @@ class PlaceService
             ] + $optionalParams
         );
 
-        $googleUrl = $this->detailEndpint . '?' . $queryString;
+        $googleUrl = $this->detailEndpoint . '?' . $queryString;
 
         if ($fields !== null) {
             $googleUrl .= '&fields=' . array_reduce($fields, function($carry, $item) {
