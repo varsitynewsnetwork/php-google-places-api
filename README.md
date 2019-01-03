@@ -1,7 +1,7 @@
 # google-places-api
 
 A mini library to fetch place information out of Google Places API via a text search or a find place request
-
+![Build Status](https://travis-ci.org/varsitynewsnetwork/php-google-places-api.svg?branch=master)
 
 ## Usage
 
@@ -28,7 +28,7 @@ $results = $service->textSearch('Van Andel Arena', function (results) {
     if (count($results)) {
         return $results[0]['formatted_address'];
     }
-    
+
     return null;
 });
 ```
@@ -39,7 +39,7 @@ The library also ships with some standard formatters:
  1. `LatLngFormatter`: Formats the results as an array of lat, lng, and address.
  1. `SingleResultFormatter`: Grabs the first result and returns it
  1. `CompositeFormatter`: Allows for running multiple formatters
- 
+
 Example:
 
 ```php
