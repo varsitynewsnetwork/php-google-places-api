@@ -3,7 +3,6 @@
 use Prophecy\Prophet;
 use Vnn\Places\Client\ClientInterface;
 use Vnn\Places\PlaceService;
-use Vnn\Places\Client\GuzzleAdapter;
 
 describe('Vnn\Places\PlaceService', function () {
     beforeEach(function () {
