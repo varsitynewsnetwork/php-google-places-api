@@ -11,11 +11,11 @@ describe('Vnn\Places\PlaceService', function () {
         $this->service = new PlaceService($this->client->reveal(), ['key' => 'master']);
     });
 
-    describe('search()', function () {
+    describe('textSearch()', function () {
         it('should query Google for the requested place', function () {
             $this->client->fetch('https://maps.googleapis.com/maps/api/place/textsearch/json?query=foo&key=master')
                 ->willReturn(['results' => 9]);
-            $result = $this->service->search('foo');
+            $result = $this->service->textSearch('foo');
 
             expect($result)->to->equal(9);
             $this->prophet->checkPredictions();
@@ -23,8 +23,8 @@ describe('Vnn\Places\PlaceService', function () {
 
         it('should encode the query param', function () {
             $this->client->fetch('https://maps.googleapis.com/maps/api/place/textsearch/json?query=foo+bar+city&key=master')
-                ->willReturn(['results' => 9]);
-            $this->service->search('foo bar city');
+                ->willReturn(['results' => 9])->shouldBeCalled();
+            $this->service->textSearch('foo bar city');
 
             $this->prophet->checkPredictions();
         });
@@ -32,7 +32,7 @@ describe('Vnn\Places\PlaceService', function () {
         it('should run the result through the passed formatter', function () {
             $this->client->fetch('https://maps.googleapis.com/maps/api/place/textsearch/json?query=&key=master')
                 ->willReturn(['results' => 9]);
-            $result = $this->service->search('', function ($result) {
+            $result = $this->service->textSearch('', function ($result) {
                 return $result * 2;
             });
 
@@ -40,6 +40,44 @@ describe('Vnn\Places\PlaceService', function () {
         });
     });
 
+    describe('findPlace()', function () {
+        it('should query Google for the requested place', function () {
+            $this->client->fetch('https://maps.googleapis.com/maps/api/place/findplacefromtext/json?key=master&input=foo&inputtype=textquery')
+                ->willReturn(['candidates' => 9]);
+            $result = $this->service->findPlace('foo');
+
+            expect($result)->to->equal(9);
+            $this->prophet->checkPredictions();
+        });
+
+        it('should encode the input param', function () {
+            $this->client->fetch('https://maps.googleapis.com/maps/api/place/findplacefromtext/json?key=master&input=foo+bar+city&inputtype=textquery')
+                ->willReturn(['candidates' => 9])->shouldBeCalled();
+            $this->service->findPlace('foo bar city');
+
+            $this->prophet->checkPredictions();
+        });
+
+        it('should request output fields if specified', function () {
+            $this->client->fetch('https://maps.googleapis.com/maps/api/place/findplacefromtext/json?' .
+                'key=master&input=foo&inputtype=textquery&fields=formatted_address,name,geometry')
+                ->willReturn(['candidates' => 9]);
+           $result = $this->service->findPlace('foo', null, ['formatted_address', 'name', 'geometry']);
+
+           expect($result)->to->equal(9);
+           $this->prophet->checkPredictions();
+        });
+
+        it('should run the result through the passed formatter', function () {
+            $this->client->fetch('https://maps.googleapis.com/maps/api/place/findplacefromtext/json?key=master&input=&inputtype=textquery')
+                ->willReturn(['candidates' => 9]);
+            $result = $this->service->findPlace('', function ($result) {
+                return $result * 2;
+            });
+
+            expect($result)->to->equal(18);
+        });
+    });
 
     describe('detail()', function () {
         it('should query Google for the requested place', function () {

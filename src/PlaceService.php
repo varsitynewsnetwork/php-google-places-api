@@ -13,7 +13,12 @@ class PlaceService
     /**
      * @var string
      */
-    protected $searchEndpoint = 'https://maps.googleapis.com/maps/api/place/textsearch/json';
+    protected $findPlaceEndpoint = 'https://maps.googleapis.com/maps/api/place/findplacefromtext/json';
+
+    /**
+     * @var string
+     */
+    protected $textSearchEndpoint = 'https://maps.googleapis.com/maps/api/place/textsearch/json';
 
     /**
      * @var string
@@ -70,9 +75,9 @@ class PlaceService
      * @return array
      * @throws \RuntimeException
      */
-    public function search($place, callable $resultFormatter = null)
+    public function textSearch($place, callable $resultFormatter = null)
     {
-        $googleUrl = $this->searchEndpoint .
+        $googleUrl = $this->textSearchEndpoint .
             '?query=' . urlencode($place) .
             '&key=' . urlencode($this->apiKey);
 
@@ -83,6 +88,49 @@ class PlaceService
         }
 
         $data = $data['results'];
+
+        if (isset($resultFormatter)) {
+            $data = $resultFormatter($data);
+        }
+
+        return $data;
+    }
+
+    /**
+     * Looks up the location passed in the Google Places API via Find Place
+     * request and returns raw data, which may be formatted by the passed
+     * formatter.
+     *
+     * @param string $place The string to look up as a Google Places location
+     * @param callable $resultFormatter Called on the results to format them
+     * @param array $fields The output fields you wish to retrieve from the Places API
+     * @return array
+     * @throws \RuntimeException
+     */
+    public function findPlace($place, callable $resultFormatter = null, $fields = null)
+    {
+        $googleUrl = $this->findPlaceEndpoint .
+        '?key=' . urlencode($this->apiKey) .
+        '&input=' . urlencode($place) .
+        '&inputtype=textquery';
+
+        if ($fields !== null) {
+            $googleUrl .= '&fields=' . array_reduce($fields, function($carry, $item) {
+                if (!$carry) {
+                    return $item;
+                } else {
+                    return $carry . ',' . $item;
+                }
+            });
+        }
+
+        $data = $this->client->fetch($googleUrl);
+
+        if (!isset($data['candidates'])) {
+            return [];
+        }
+
+        $data = $data['candidates'];
 
         if (isset($resultFormatter)) {
             $data = $resultFormatter($data);
