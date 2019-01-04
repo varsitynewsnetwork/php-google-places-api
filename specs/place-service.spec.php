@@ -29,6 +29,15 @@ describe('Vnn\Places\PlaceService', function () {
             $this->prophet->checkPredictions();
         });
 
+        it('should encode optional parameters', function () {
+            $this->client->fetch(
+                'https://maps.googleapis.com/maps/api/place/textsearch/json?query=foo+bar+city&key=master&foo=bar%26baz'
+            )->willReturn(['results' => 9])->shouldBeCalled();
+
+            $this->service->textSearch('foo bar city', null, ['foo' => 'bar&baz']);
+            $this->prophet->checkPredictions();
+        });
+
         it('should run the result through the passed formatter', function () {
             $this->client->fetch('https://maps.googleapis.com/maps/api/place/textsearch/json?query=&key=master')
                 ->willReturn(['results' => 9]);
@@ -54,6 +63,14 @@ describe('Vnn\Places\PlaceService', function () {
             $this->client->fetch('https://maps.googleapis.com/maps/api/place/findplacefromtext/json?key=master&input=foo+bar+city&inputtype=textquery')
                 ->willReturn(['candidates' => 9])->shouldBeCalled();
             $this->service->findPlace('foo bar city');
+
+            $this->prophet->checkPredictions();
+        });
+
+        it('should encode optional params', function () {
+            $this->client->fetch('https://maps.googleapis.com/maps/api/place/findplacefromtext/json?key=master&input=foo&inputtype=textquery&bar=baz+biz')
+                ->willReturn(['candidates' => 9])->shouldBeCalled();
+            $this->service->findPlace('foo', null, null, ['bar' => 'baz biz']);
 
             $this->prophet->checkPredictions();
         });
@@ -84,6 +101,25 @@ describe('Vnn\Places\PlaceService', function () {
             $this->client->fetch('https://maps.googleapis.com/maps/api/place/details/json?placeid=foo&key=master')
                 ->willReturn(['result' => 9]);
             $result = $this->service->detail('foo');
+
+            expect($result)->to->equal(9);
+            $this->prophet->checkPredictions();
+        });
+
+        it('should encode the optional params', function () {
+            $this->client->fetch('https://maps.googleapis.com/maps/api/place/details/json?placeid=foo&key=master&bar=biz+baz')
+                ->willReturn(['result' => 9]);
+            $result = $this->service->detail('foo', null, null, ['bar' => 'biz baz']);
+
+            expect($result)->to->equal(9);
+            $this->prophet->checkPredictions();
+        });
+
+        it('should request output fields if specified', function () {
+            $this->client->fetch('https://maps.googleapis.com/maps/api/place/details/json?' .
+                'placeid=foo&key=master&fields=formatted_address,name,geometry'
+                )->willReturn(['result' => 9]);
+            $result = $this->service->detail('foo', null, ['formatted_address', 'name', 'geometry']);
 
             expect($result)->to->equal(9);
             $this->prophet->checkPredictions();
