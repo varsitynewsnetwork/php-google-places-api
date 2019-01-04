@@ -1,6 +1,7 @@
 # google-places-api
 
 A mini library to fetch place information out of Google Places API via a text search or a find place request
+
 ![Build Status](https://travis-ci.org/varsitynewsnetwork/php-google-places-api.svg?branch=master)
 
 ## Usage
