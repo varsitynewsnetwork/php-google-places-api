@@ -79,6 +79,17 @@ class PlaceService
 
         return $data;
     }
+    
+    /**
+    * @param string $googleApiKey
+    * @return $this
+    */
+    public function setApiKey(string $googleApiKey)
+    {
+        $this->googleApiKey = $googleApiKey;
+        
+        return $this;
+    }
 
     /**
      * Looks up the location passed in the Google Places API via Find Place
