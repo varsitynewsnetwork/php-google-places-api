@@ -33,37 +33,16 @@ class PlaceService
     /**
      * @var string
      */
-    protected $apiKey;
+    protected $googleApiKey;
 
     /**
      * @param ClientInterface $client
-     * @param array $config
+     * @param string $googleApiKey
      */
-    public function __construct(ClientInterface $client, array $config = [])
+    public function __construct(ClientInterface $client, string $googleApiKey)
     {
         $this->client = $client;
-
-        if (isset($config['key'])) {
-            $this->setApiKey($config['key']);
-        }
-    }
-
-    /**
-     * @return string
-     */
-    public function getApiKey()
-    {
-        return $this->apiKey;
-    }
-
-    /**
-     * @param string $apiKey
-     * @return $this
-     */
-    public function setApiKey($apiKey)
-    {
-        $this->apiKey = $apiKey;
-        return $this;
+        $this->googleApiKey = $googleApiKey;
     }
 
     /**
@@ -81,7 +60,7 @@ class PlaceService
         $queryString = http_build_query(
             [
                 'query' => $place,
-                'key' => $this->apiKey
+                'key' => $this->googleApiKey
             ] + $optionalParams
         );
         $googleUrl = $this->textSearchEndpoint . '?' . $queryString;
@@ -117,7 +96,7 @@ class PlaceService
     {
         $queryString = http_build_query(
             [
-                'key' => $this->apiKey,
+                'key' => $this->googleApiKey,
                 'input' => $place,
                 'inputtype' => 'textquery'
             ] + $optionalParams
@@ -163,7 +142,7 @@ class PlaceService
         $queryString = http_build_query(
             [
                 'placeid' => $placeId,
-                'key' => $this->apiKey
+                'key' => $this->googleApiKey
             ] + $optionalParams
         );
 
