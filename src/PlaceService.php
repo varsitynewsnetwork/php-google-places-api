@@ -31,20 +31,31 @@ class PlaceService
     protected $client;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $googleApiKey;
 
     /**
      * @param ClientInterface $client
-     * @param string $googleApiKey
+     * @param string|null $googleApiKey
      */
-    public function __construct(ClientInterface $client, string $googleApiKey)
+    public function __construct(ClientInterface $client, ?string $googleApiKey = null)
     {
         $this->client = $client;
         $this->googleApiKey = $googleApiKey;
     }
 
+    /**
+     * @param string $googleApiKey
+     * @return $this
+     */
+    public function setApiKey(string $googleApiKey)
+    {
+        $this->googleApiKey = $googleApiKey;
+        
+        return $this;
+    }
+    
     /**
      * Looks up the location passed in the Google Places API via text search
      * and returns raw data, which may be formatted by the passed formatter.
@@ -78,17 +89,6 @@ class PlaceService
         }
 
         return $data;
-    }
-    
-    /**
-    * @param string $googleApiKey
-    * @return $this
-    */
-    public function setApiKey(string $googleApiKey)
-    {
-        $this->googleApiKey = $googleApiKey;
-        
-        return $this;
     }
 
     /**
