@@ -102,7 +102,7 @@ describe('Vnn\Places\PlaceService', function () {
         it('should request output fields if specified', function () {
             
             $apiUrl = 'https://maps.googleapis.com/maps/api/place/findplacefromtext/json?' .
-                'key='.$this->googleApiKey.'&input=foo&inputtype=textquery&fields=formatted_address,name,geometry'
+                'key='.$this->googleApiKey.'&input=foo&inputtype=textquery&fields=formatted_address,name,geometry';
             
             $this->client->fetch($apiUrl)
                 ->willReturn(['candidates' => 9]);
