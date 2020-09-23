@@ -31,41 +31,31 @@ class PlaceService
     protected $client;
 
     /**
-     * @var string
+     * @var string|null
      */
-    protected $apiKey;
+    protected $googleApiKey;
 
     /**
      * @param ClientInterface $client
-     * @param array $config
+     * @param string|null $googleApiKey
      */
-    public function __construct(ClientInterface $client, array $config = [])
+    public function __construct(ClientInterface $client, ?string $googleApiKey = null)
     {
         $this->client = $client;
-
-        if (isset($config['key'])) {
-            $this->setApiKey($config['key']);
-        }
+        $this->googleApiKey = $googleApiKey;
     }
 
     /**
-     * @return string
-     */
-    public function getApiKey()
-    {
-        return $this->apiKey;
-    }
-
-    /**
-     * @param string $apiKey
+     * @param string $googleApiKey
      * @return $this
      */
-    public function setApiKey($apiKey)
+    public function setApiKey(string $googleApiKey)
     {
-        $this->apiKey = $apiKey;
+        $this->googleApiKey = $googleApiKey;
+        
         return $this;
     }
-
+    
     /**
      * Looks up the location passed in the Google Places API via text search
      * and returns raw data, which may be formatted by the passed formatter.
@@ -81,7 +71,7 @@ class PlaceService
         $queryString = http_build_query(
             [
                 'query' => $place,
-                'key' => $this->apiKey
+                'key' => $this->googleApiKey
             ] + $optionalParams
         );
         $googleUrl = $this->textSearchEndpoint . '?' . $queryString;
@@ -117,7 +107,7 @@ class PlaceService
     {
         $queryString = http_build_query(
             [
-                'key' => $this->apiKey,
+                'key' => $this->googleApiKey,
                 'input' => $place,
                 'inputtype' => 'textquery'
             ] + $optionalParams
@@ -163,7 +153,7 @@ class PlaceService
         $queryString = http_build_query(
             [
                 'placeid' => $placeId,
-                'key' => $this->apiKey
+                'key' => $this->googleApiKey
             ] + $optionalParams
         );
 
