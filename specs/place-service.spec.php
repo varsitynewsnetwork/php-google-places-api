@@ -8,7 +8,13 @@ describe('Vnn\Places\PlaceService', function () {
     beforeEach(function () {
         $this->prophet = new Prophet();
         $this->client = $this->prophet->prophesize(ClientInterface::class);
-        $this->service = new PlaceService($this->client->reveal(), ['key' => 'master']);
+        
+        $googleApiKey = 'testKey';
+        
+        $this->service = new PlaceService(
+            $this->client->reveal(),
+            $googleApiKey
+        );
     });
 
     describe('textSearch()', function () {
