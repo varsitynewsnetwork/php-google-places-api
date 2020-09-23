@@ -23,6 +23,7 @@ describe('Vnn\Places\PlaceService', function () {
             $apiUrl = 'https://maps.googleapis.com/maps/api/place/textsearch/json?query=foo&key='.$this->googleApiKey;
             
             $this->client->fetch($apiUrl)
+                ->shouldBeCalled()
                 ->willReturn(['results' => 9]);
             
             $result = $this->service->textSearch('foo');
@@ -32,8 +33,13 @@ describe('Vnn\Places\PlaceService', function () {
         });
 
         it('should encode the query param', function () {
-            $this->client->fetch('https://maps.googleapis.com/maps/api/place/textsearch/json?query=foo+bar+city&key=master')
-                ->willReturn(['results' => 9])->shouldBeCalled();
+            
+            $apiUrl = 'https://maps.googleapis.com/maps/api/place/textsearch/json?query=foo+bar+city&key='.$this->googleApiKey;
+            
+            $this->client->fetch($apiUrl)
+                ->shouldBeCalled()
+                ->willReturn(['results' => 9]);
+            
             $this->service->textSearch('foo bar city');
 
             $this->prophet->checkPredictions();
@@ -43,7 +49,9 @@ describe('Vnn\Places\PlaceService', function () {
             
             $apiUrl = 'https://maps.googleapis.com/maps/api/place/textsearch/json?query=foo+bar+city&key='.$this->googleApiKey.'&foo=bar%26baz';
             
-            $this->client->fetch($apiUrl)->willReturn(['results' => 9])->shouldBeCalled();
+            $this->client->fetch($apiUrl)
+                ->shouldBeCalled()
+                ->willReturn(['results' => 9]);
 
             $this->service->textSearch('foo bar city', null, ['foo' => 'bar&baz']);
             $this->prophet->checkPredictions();
@@ -54,6 +62,7 @@ describe('Vnn\Places\PlaceService', function () {
             $apiUrl = 'https://maps.googleapis.com/maps/api/place/textsearch/json?query=&key='.$this->googleApiKey;
             
             $this->client->fetch($apiUrl)
+                ->shouldBeCalled()
                 ->willReturn(['results' => 9]);
             
             $result = $this->service->textSearch('', function ($result) {
@@ -70,7 +79,9 @@ describe('Vnn\Places\PlaceService', function () {
             $apiUrl = 'https://maps.googleapis.com/maps/api/place/findplacefromtext/json?key='.$this->googleApiKey.'&input=foo&inputtype=textquery';
             
             $this->client->fetch($apiUrl)
+                ->shouldBeCalled()
                 ->willReturn(['candidates' => 9]);
+            
             $result = $this->service->findPlace('foo');
 
             expect($result)->to->equal(9);
@@ -82,7 +93,9 @@ describe('Vnn\Places\PlaceService', function () {
             $apiUrl = 'https://maps.googleapis.com/maps/api/place/findplacefromtext/json?key='.$this->googleApiKey.'&input=foo+bar+city&inputtype=textquery';
             
             $this->client->fetch($apiUrl)
-                ->willReturn(['candidates' => 9])->shouldBeCalled();
+                ->shouldBeCalled()
+                ->willReturn(['candidates' => 9]);
+            
             $this->service->findPlace('foo bar city');
 
             $this->prophet->checkPredictions();
@@ -93,7 +106,9 @@ describe('Vnn\Places\PlaceService', function () {
             $apiUrl = 'https://maps.googleapis.com/maps/api/place/findplacefromtext/json?key='.$this->googleApiKey.'&input=foo&inputtype=textquery&bar=baz+biz';
             
             $this->client->fetch($apiUrl)
-                ->willReturn(['candidates' => 9])->shouldBeCalled();
+                ->shouldBeCalled()
+                ->willReturn(['candidates' => 9]);
+            
             $this->service->findPlace('foo', null, null, ['bar' => 'baz biz']);
 
             $this->prophet->checkPredictions();
@@ -105,7 +120,9 @@ describe('Vnn\Places\PlaceService', function () {
                 'key='.$this->googleApiKey.'&input=foo&inputtype=textquery&fields=formatted_address,name,geometry';
             
             $this->client->fetch($apiUrl)
+                ->shouldBeCalled()
                 ->willReturn(['candidates' => 9]);
+            
            $result = $this->service->findPlace('foo', null, ['formatted_address', 'name', 'geometry']);
 
            expect($result)->to->equal(9);
@@ -117,6 +134,7 @@ describe('Vnn\Places\PlaceService', function () {
             $apiUrl = 'https://maps.googleapis.com/maps/api/place/findplacefromtext/json?key='.$this->googleApiKey.'&input=&inputtype=textquery';
             
             $this->client->fetch($apiUrl)
+                ->shouldBeCalled()
                 ->willReturn(['candidates' => 9]);
             
             $result = $this->service->findPlace('', function ($result) {
@@ -133,7 +151,9 @@ describe('Vnn\Places\PlaceService', function () {
             $apiUrl = 'https://maps.googleapis.com/maps/api/place/details/json?placeid=foo&key='.$this->googleApiKey;
             
             $this->client->fetch($apiUrl)
+                ->shouldBeCalled()
                 ->willReturn(['result' => 9]);
+            
             $result = $this->service->detail('foo');
 
             expect($result)->to->equal(9);
@@ -145,7 +165,9 @@ describe('Vnn\Places\PlaceService', function () {
             $apiUrl = 'https://maps.googleapis.com/maps/api/place/details/json?placeid=foo&key='.$this->googleApiKey.'&bar=biz+baz';
             
             $this->client->fetch($apiUrl)
+                ->shouldBeCalled()
                 ->willReturn(['result' => 9]);
+            
             $result = $this->service->detail('foo', null, null, ['bar' => 'biz baz']);
 
             expect($result)->to->equal(9);
@@ -158,7 +180,9 @@ describe('Vnn\Places\PlaceService', function () {
                 'placeid=foo&key='.$this->googleApiKey.'&fields=formatted_address,name,geometry';
             
             $this->client->fetch($apiKey)
+                ->shouldBeCalled()
                 ->willReturn(['result' => 9]);
+                
             
             $result = $this->service->detail('foo', null, ['formatted_address', 'name', 'geometry']);
 
@@ -171,7 +195,9 @@ describe('Vnn\Places\PlaceService', function () {
             $apiKey = 'https://maps.googleapis.com/maps/api/place/details/json?placeid=&key='.$this->googleApiKey;
             
             $this->client->fetch($apiKey)
+                ->shouldBeCalled()
                 ->willReturn(['result' => 9]);
+            
             $result = $this->service->detail('', function ($result) {
                 return $result * 2;
             });
